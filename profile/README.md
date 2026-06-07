@@ -4,129 +4,98 @@
 
 VigilantMLOps gives ML teams a real-time observability layer over deployed models — surfacing data drift, concept drift, and performance decay before they become production incidents. Built around a Network Intrusion / Malicious URL detection use case, but designed to be model-agnostic.
 
-🔗 Live here: https://vigilant-mlops-ui.onrender.com
+🔗 Live UI: https://vigilant-ui.duckdns.org
+</br>
+🔗 Live API: https://vigilant-api.duckdns.org
+</br>
+🔗 LinkedIn post: https://www.linkedin.com/posts/bara-alsedih_mlops-machinelearning-python-activity-7458189356126863360-7yBI
 
-🔗 LinkedIn post: https://www.linkedin.com/posts/bara-alsedih_mlops-machinelearning-python-activity-7458189356126863360-7yBI?utm_source=share&utm_medium=member_desktop&rcm=ACoAAEelapkBoIDq5_60n2J0LNtHPl9ugf17cfs
+Tech: Python · FastAPI · PostgreSQL · ClickHouse · Polars · scikit-learn · React · TypeScript · Vite · Docker · Caddy · Poetry
 
+---
 
-Tech: Python · FastAPI · DuckDB · Polars · Evidently · ReactJS · TypeScript · Docker · Poetry
+## Repositories
+
+The platform is split into focused repos, each independently deployable:
+
+| Repo | Purpose | Stack |
+|---|---|---|
+| [vigilant-api](https://github.com/baraalsedih/vigilant-api) | FastAPI backend — evaluation reports, drift detection, incident lifecycle, telemetry | Python 3.12 · FastAPI · PostgreSQL · ClickHouse |
+| [vigilant-ui](https://github.com/baraalsedih/vigilant-ui) | React dashboard — overview, evaluation, drift, incidents | React 18 · Vite · TypeScript · Tailwind · TanStack Query |
+| [vigilant-mlops](https://github.com/baraalsedih/vigilant-mlops) (legacy) | Original monorepo + model training artifacts | Python · DuckDB |
+
+Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow. Start there for local development.
 
 ---
 
 ## Architecture
 
-<img width="1408" height="768" alt="system-design" src="https://github.com/user-attachments/assets/ed8aac7a-bd72-4314-83af-4c190a6adfde" />
+### Vigilant-API
 
-</br>
-
-<img width="1512" height="829" alt="Screenshot 2026-05-07 at 4 44 08 PM" src="https://github.com/user-attachments/assets/814c3748-6a9d-4cad-8a9e-2e4e9787cc33" />
-
+<img width="1376" height="768" alt="Gemini_Generated_Image_n40oden40oden40o" src="https://github.com/user-attachments/assets/35f26b65-37ab-477b-a916-d6be4cb29b2f" />
 
 
 </br>
-
-<img width="1512" height="827" alt="Screenshot 2026-05-07 at 4 44 49 PM" src="https://github.com/user-attachments/assets/ebb6a6e3-e527-4d21-8f61-50756f515665" />
-
 </br>
 
-### Key API Routes
+<img width="1512" height="829" alt="Overview dashboard" src="https://github.com/user-attachments/assets/814c3748-6a9d-4cad-8a9e-2e4e9787cc33" />
+
+</br>
+</br>
+
+<img width="1512" height="827" alt="Evaluation dashboard" src="https://github.com/user-attachments/assets/ebb6a6e3-e527-4d21-8f61-50756f515665" />
+
+</br>
+</br>
+
+### Data layer
+
+- **OLTP (PostgreSQL)** — model registry, evaluation reports, incidents. Transactional, mutable, relational.
+- **OLAP (ClickHouse)** — production traffic log, alerts, drift results, report metrics, LLM traces. Append-only, high-volume.
+
+### Key API routes
 
 | Prefix | Purpose |
 |---|---|
+| `/api/v1/reports` | Evaluation report history (latest, last 10) |
+| `/api/v1/reporter` | Pre/post-production evaluation runners (data, model, drift) |
 | `/api/v1/monitoring` | Live drift & telemetry metrics |
-| `/api/v1/reporter` | Pre/post-production evaluation reports |
-| `/api/v1/incidents` | Incident log (auto-triggered by alerting engine) |
+| `/api/v1/incidents` | Incident lifecycle (auto-triggered by alerting engine) |
 | `/api/v1/telemetry` | System health & latency probes |
 
----
-
-## Prerequisites
-
-| Requirement | Version |
-|---|---|
-| Python | 3.12.x |
-| Poetry | 1.8+ |
-| Docker & Docker Compose | 24+ |
-| Node.js | 20+ (for local UI dev) |
+Full reference: [vigilant-api README](https://github.com/baraalsedih/vigilant-api#api-reference).
 
 ---
 
-## Quick Start (Docker Compose)
+## The 3 Pillars
 
-```bash
-# 1. Clone the repo
-git clone https://github.com/baraalsedih/vigilant-mlops.git
-cd vigilant-mlops
+**Drift Detection** — statistical shifts between training reference and incoming production data via PSI, KS-test, and Chi² test.
 
-# 2. Copy environment template
-cp .env.example .env          # edit values if needed
+**Performance Monitoring** — accuracy, F1, precision, recall, and confusion-matrix deltas over time. Alerts on decay relative to the pre-production baseline.
 
-# 3. Start the full stack
-docker compose up --build
-
-# Services:
-#   Backend API  →  http://localhost:8000
-#   API Docs     →  http://localhost:8000/docs
-#   Frontend     →  http://localhost:5173
-```
-
----
-
-## Local Development
-
-Run `make help` to see all available commands.
-
-### Backend
-
-```bash
-make dev-backend     # start FastAPI with hot reload
-```
-
-### Database
-
-```bash
-make db-init         # apply migrations (idempotent)
-make db-reset        # drop all tables and re-migrate from scratch
-make db-status       # show applied migration history
-make seed            # populate DuckDB with evaluation + drift data
-```
-
-### Tests
-
-```bash
-make test
-```
-
----
-
-## Project Structure
-
-```
-vigilant-mlops/
-├── apps/
-│   ├── backend/          # FastAPI application
-│   │   ├── api/v1/       # Route handlers (monitoring, reporter, incidents, telemetry)
-│   │   ├── services/     # Business logic (drift_detector, performance_service, alerting_engine …)
-│   │   ├── core/         # DB manager, migrations, procedures config
-│   │   └── main.py
-│   └── ui/               # React + Vite + Tailwind frontend
-├── artifacts/            # Trained model artifacts
-├── scripts/              # Seed & utility scripts
-└── docker-compose.yml
-```
+**System Health** — API latency and schema consistency via middleware. Alerts on slow requests (>500ms) and 5xx errors.
 
 ---
 
 ## Incident Procedures
 
-Automated remediation actions are defined in [apps/backend/core/procedures.yaml](apps/backend/core/procedures.yaml):
+Automated remediation is defined in [vigilant-api/core/procedures.yaml](https://github.com/baraalsedih/vigilant-api/blob/main/core/procedures.yaml). Low-risk incidents auto-resolve; high-risk ones create tickets for human review.
 
-| Incident Type | Risk | Auto-Trigger |
+| Incident Type | Risk | Behavior |
 |---|---|---|
-| `system_latency` | Low | Yes — refetch DB |
-| `schema_skew` | Low | Yes — refetch schema |
-| `data_drift` | High | No — ticket only |
-| `performance_drop` | High | No — ticket only |
+| `system_latency` | Low | Auto-resolves (refetch DB) |
+| `schema_skew` | Low | Auto-resolves (refresh schema) |
+| `data_drift` | High | Creates incident ticket |
+| `performance_drop` | High | Creates incident ticket |
+
+---
+
+## Deployment
+
+Both services run on a single Oracle Cloud Always-Free VM behind Caddy (automatic Let's Encrypt TLS). Each repo has a tag-triggered GitHub Actions workflow:
+
+- `deploy.api.*` → ships [vigilant-api](https://github.com/baraalsedih/vigilant-api)
+- `deploy.ui.*`  → ships [vigilant-ui](https://github.com/baraalsedih/vigilant-ui)
 
 ---
 
