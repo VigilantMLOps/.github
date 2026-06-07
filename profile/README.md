@@ -38,6 +38,8 @@ Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow
 </br>
 </br>
 
+### Vigilant-UI
+
 <img width="1512" height="829" alt="Overview dashboard" src="https://github.com/user-attachments/assets/814c3748-6a9d-4cad-8a9e-2e4e9787cc33" />
 
 </br>
