@@ -1,8 +1,8 @@
-# VigilantMLOps
+# Atlas AI
 
-**A production-grade platform for monitoring ML incidents, drift, and performance.**
+**A production-grade platform for building, deploying, and monitoring ML/AI applications.**
 
-VigilantMLOps gives ML teams a real-time observability layer over deployed models — surfacing data drift, concept drift, and performance decay before they become production incidents. Built around a Network Intrusion / Malicious URL detection use case, but designed to be model-agnostic.
+Atlas AI gives teams the full stack — from model training and deployment to real-time observability, drift detection, and incident management. Built around real use cases (network intrusion detection, account takeover, RAG) but designed to be model-agnostic.
 
 🔗 Live UI: https://vigilant-ui.duckdns.org
 </br>
@@ -16,15 +16,15 @@ Tech: Python · FastAPI · PostgreSQL · ClickHouse · Polars · scikit-learn ·
 
 ## Repositories
 
-The platform is split into focused repos, each independently deployable:
-
 | Repo | Purpose | Stack |
 |---|---|---|
-| [vigilant-api](https://github.com/baraalsedih/vigilant-api) | FastAPI backend — evaluation reports, drift detection, incident lifecycle, telemetry | Python 3.12 · FastAPI · PostgreSQL · ClickHouse |
-| [vigilant-ui](https://github.com/baraalsedih/vigilant-ui) | React dashboard — overview, evaluation, drift, incidents | React 18 · Vite · TypeScript · Tailwind · TanStack Query |
-| [vigilant-mlops](https://github.com/baraalsedih/vigilant-mlops) (legacy) | Original monorepo + model training artifacts | Python · DuckDB |
+| [vigilant-api](https://github.com/VigilantMLOps/vigilant-api) | Monitoring backend — evaluation reports, drift detection, incident lifecycle, telemetry | Python · FastAPI · PostgreSQL · ClickHouse |
+| [vigilant-ui](https://github.com/VigilantMLOps/vigilant-ui) | Observability dashboard — overview, evaluation, drift, incidents | React 18 · TypeScript · Vite · Tailwind · TanStack Query |
+| [vigilant-detect](https://github.com/VigilantMLOps/vigilant-detect) | ML service — ATO and network intrusion detection with automated weekly retraining | Python · FastAPI · scikit-learn · Polars · APScheduler |
+| [vigilant-rag](https://github.com/VigilantMLOps/vigilant-rag) | RAG application — document retrieval and LLM-powered responses over local models | Python · FastAPI · Ollama |
+| [vigilant-pack](https://github.com/VigilantMLOps/vigilant-pack) | CLI runtime — boots any AI application stack (services, models, app) in one command | Python · Click · Rich · Docker |
 
-Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow. Start there for local development.
+Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow.
 
 ---
 
@@ -33,7 +33,6 @@ Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow
 ### Vigilant-API
 
 <img width="1376" height="768" alt="Gemini_Generated_Image_n40oden40oden40o" src="https://github.com/user-attachments/assets/35f26b65-37ab-477b-a916-d6be4cb29b2f" />
-
 
 </br>
 </br>
@@ -65,7 +64,7 @@ Each repo owns its own setup, env vars, tests, and tag-triggered deploy workflow
 | `/api/v1/incidents` | Incident lifecycle (auto-triggered by alerting engine) |
 | `/api/v1/telemetry` | System health & latency probes |
 
-Full reference: [vigilant-api README](https://github.com/baraalsedih/vigilant-api#api-reference).
+Full reference: [vigilant-api README](https://github.com/VigilantMLOps/vigilant-api#api-reference).
 
 ---
 
@@ -81,7 +80,7 @@ Full reference: [vigilant-api README](https://github.com/baraalsedih/vigilant-ap
 
 ## Incident Procedures
 
-Automated remediation is defined in [vigilant-api/core/procedures.yaml](https://github.com/baraalsedih/vigilant-api/blob/main/core/procedures.yaml). Low-risk incidents auto-resolve; high-risk ones create tickets for human review.
+Automated remediation is defined in [vigilant-api/core/procedures.yaml](https://github.com/VigilantMLOps/vigilant-api/blob/main/core/procedures.yaml). Low-risk incidents auto-resolve; high-risk ones create tickets for human review.
 
 | Incident Type | Risk | Behavior |
 |---|---|---|
@@ -94,10 +93,11 @@ Automated remediation is defined in [vigilant-api/core/procedures.yaml](https://
 
 ## Deployment
 
-Both services run on a single Oracle Cloud Always-Free VM behind Caddy (automatic Let's Encrypt TLS). Each repo has a tag-triggered GitHub Actions workflow:
+All services run on a single Oracle Cloud Always-Free VM behind Caddy (automatic Let's Encrypt TLS). Each repo has a tag-triggered GitHub Actions workflow:
 
-- `deploy.api.*` → ships [vigilant-api](https://github.com/baraalsedih/vigilant-api)
-- `deploy.ui.*`  → ships [vigilant-ui](https://github.com/baraalsedih/vigilant-ui)
+- `deploy.api.*` → ships [vigilant-api](https://github.com/VigilantMLOps/vigilant-api)
+- `deploy.ui.*` → ships [vigilant-ui](https://github.com/VigilantMLOps/vigilant-ui)
+- `deploy.ml.*` → ships [vigilant-detect](https://github.com/VigilantMLOps/vigilant-detect)
 
 ---
 
