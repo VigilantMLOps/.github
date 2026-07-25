@@ -6,7 +6,7 @@ Atlas AI gives teams the full stack — from model training and deployment to re
 
 🔗 Live UI: https://vigilant-ui.duckdns.org
 </br>
-🔗 Live API: https://vigilant-api.duckdns.org
+🔗 Live API: https://vigilant-api.duckdns.org/docs
 </br>
 🔗 LinkedIn post: https://www.linkedin.com/posts/bara-alsedih_mlops-machinelearning-python-activity-7458189356126863360-7yBI
 
@@ -18,7 +18,7 @@ Tech: Python · FastAPI · PostgreSQL · ClickHouse · Polars · scikit-learn ·
 
 | Repo | Purpose | Stack |
 |---|---|---|
-| [vigilant-api](https://github.com/VigilantMLOps/vigilant-api/docs) | Monitoring backend — evaluation reports, drift detection, incident lifecycle, telemetry | Python · FastAPI · PostgreSQL · ClickHouse |
+| [vigilant-api](https://github.com/VigilantMLOps/vigilant-api) | Monitoring backend — evaluation reports, drift detection, incident lifecycle, telemetry | Python · FastAPI · PostgreSQL · ClickHouse |
 | [vigilant-ui](https://github.com/VigilantMLOps/vigilant-ui) | Observability dashboard — overview, evaluation, drift, incidents | React 18 · TypeScript · Vite · Tailwind · TanStack Query |
 | [vigilant-detect](https://github.com/VigilantMLOps/vigilant-detect) | ML service — ATO and network intrusion detection with automated weekly retraining | Python · FastAPI · scikit-learn · Polars · APScheduler |
 | [vigilant-rag](https://github.com/VigilantMLOps/vigilant-rag) | RAG application — document retrieval and LLM-powered responses over local models | Python · FastAPI · Ollama |
